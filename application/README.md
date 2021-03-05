@@ -4,10 +4,10 @@ To help customers get started with executing Hyperledger native commands on HLF 
 ### Before you begin
 Follow the below commands for the initial setup of the application:
 
-   - [ Download application files](#downloadFiles)
-   - [ Generate connection profile and admin profile](#profileGen)
-   - [Import admin user identity](#importAdmin)
-   
+- [ Download application files](#downloadFiles)
+- [ Generate connection profile and admin profile](#profileGen)
+- [Import admin user identity](#importAdmin)
+
 After completing the initial setup, you can use the SDK to achieve the below operations:
 -  [User identity generation](#fabricca)
 -  [Chaincode operations](#chaincode)
@@ -16,7 +16,7 @@ The above-mentioned commands can be executed from Azure Cloud Shell.
 
 <a name="downloadFiles"></a>
 ### Download application files
-The first setup for running application is to download all the application files in a folder say ```app```. 
+The first setup for running application is to download all the application files in a folder say ```app```.
 
 Create ```app``` folder and enter into the folder:
 ```bash
@@ -52,7 +52,7 @@ Execute below comand to generate connection profile and admin profile of the org
 ./getConnector.sh $AKS_RESOURCE_GROUP | sed -e "s/{action}/gateway/g"| xargs curl > ./profile/$ORGNAME-ccp.json
 ./getConnector.sh $AKS_RESOURCE_GROUP | sed -e "s/{action}/admin/g"| xargs curl > ./profile/$ORGNAME-admin.json
 ```
-It will create connection profile and admin profile of the organization inside the ```profile``` folder with name ```<orgname>-ccp.json``` and ```<orgname>-admin.json``` respectively. 
+It will create connection profile and admin profile of the organization inside the ```profile``` folder with name ```<orgname>-ccp.json``` and ```<orgname>-admin.json``` respectively.
 
 Similarly, generate connection profile and admin profile for each orderer and peer organization.
 
@@ -76,7 +76,7 @@ npm run importAdmin -- -h
 
 <a name="fabricca"></a>
 ### User identity generation
-Execute below commands in the given order to generate new user identites for the HLF organization. 
+Execute below commands in the given order to generate new user identites for the HLF organization.
 
 > **_Note:_** Before starting with user identity generation steps, ensure that the initial setup of the application is done.
 
@@ -99,92 +99,85 @@ Refer command help for more details on the arguments passed in the command
 npm run registerUser -- -h
 ```
 <a name="chaincode"></a>
-### Chaincode operations
-> **_Note:_** Before starting with user identity generation steps, ensure that the initial setup of the application is done.
 
-<a name="envCC"></a>
-#### Set below chaincode specific environment variables on Azure Cloud shell:
-```
-# peer organization name where chaincode is to be installed
-ORGNAME=<orgName>
-USER_IDENTITY="admin.$ORGNAME"
-CC_NAME=<chaincodeName>
-CC_VERSION=<chaincodeVersion>
-# Language in which chaincode is written. Supported languages are 'node', 'golang' and 'java'
-# Default value is 'golang'
-CC_LANG=<chaincodeLanguage>
-# CC_PATH contains the path where your chaincode is place. In case of go chaincode, this path is relative to 'GOPATH'.
-# For example, if your chaincode is present at path '/opt/gopath/src/chaincode/chaincode.go'.
-# Then, set GOPATH to '/opt/gopath' and CC_PATH to 'chaincode'
-CC_PATH=<chaincodePath>
-# 'GOPATH' environment variable. This needs to be set in case of go chaincode only.
-export GOPATH=<goPath>
-# Channel on which chaincode is to be instantiated/invoked/queried
-CHANNEL=<channelName>
-```
-The below chaincode operations can be carried out
-- [Install chaincode](#installCC)
-- [Instantiate chaincode](#instantiateCC)
-- [Invoke chaincode](#invokeCC)
-- [Query chaincode](#queryCC)
+### Consortium Creation
 
-<a name="installCC"></a>
-#### Install chaincode
-Execute below command to install chaincode on the peer organization. 
-```
-npm run installCC -- -o $ORGNAME -u $USER_IDENTITY -n $CC_NAME -p $CC_PATH -l $CC_LANG -v $CC_VERSION
-```
+    cd Hyperledger-Fabric-On-AKS/azhlfTool 
+    npm install
+    npm run setup
+####Set up environment variables
+######Set environment variables for the orderer organization's client
+    ORDERER_ORG_SUBSCRIPTION=<ordererOrgSubscription>
+    ORDERER_ORG_RESOURCE_GROUP=<ordererOrgResourceGroup>
+    ORDERER_ORG_NAME=<ordererOrgName>
+    ORDERER_ADMIN_IDENTITY="admin.$ORDERER_ORG_NAME"
+    CHANNEL_NAME=<channelName>
 
-It will install chaincode on all the peer nodes of the organization set in ```ORGNAME``` environment variable. If there are two or more peer organizations in your channel and you want to install chaincode on all of them, then this command needs to be executed separately for each peer organization. \
+#####Set environment variables for the peer organization's client
 
-Follow the steps:
-- Set ```ORGNAME``` to ```<peerOrg1Name>``` and issue ```installCC``` command. 
-- Set ```ORGNAME``` to ```<peerOrg2Name>``` and issue ```installCC``` command. 
+    PEER_ORG_SUBSCRIPTION=<peerOrgSubscritpion>
+    PEER_ORG_RESOURCE_GROUP=<peerOrgResourceGroup>
+    PEER_ORG_NAME=<peerOrgName>
+    PEER_ADMIN_IDENTITY="admin.$PEER_ORG_NAME"
+    CHANNEL_NAME=<channelName>
 
-Execute it for each peer organization.
+#####Set environment variables for an Azure storage account
 
-Refer command help for more details on the arguments passed in the command
-```
-npm run installCC -- -h
-```
-<a name="instantiateCC"></a>
-#### Instantiate chaincode
-Execute below command to instantiate chaincode on the peer. 
-```
-npm run instantiateCC -- -o $ORGNAME -u $USER_IDENTITY -n $CC_NAME -p $CC_PATH -v $CC_VERSION -l $CC_LANG -c $CHANNEL -f <instantiateFunc> -a <instantiateFuncArgs>
-```
-Pass instantiation function name and comma seperated list of arguments in ```<instantiateFunc>``` and  ```<instantiateFuncArgs>``` respectively. For example, in [ fabrcar chaincode](https://github.com/hyperledger/fabric-samples/blob/release/chaincode/fabcar/fabcar.go), to instantiate the chaincode set ```<instantiateFunc>``` to ```"Init"``` and ```<instantiateFuncArgs>``` to empty string ```""```.
+    STORAGE_SUBSCRIPTION=<subscriptionId>
+    STORAGE_RESOURCE_GROUP=<azureFileShareResourceGroup>
+    STORAGE_ACCOUNT=<azureStorageAccountName>
+    STORAGE_LOCATION=<azureStorageAccountLocation>
+    STORAGE_FILE_SHARE=<azureFileShareName>
 
-> **_Note:_** Execute the command once from any one peer organization in the channel. Once the transaction is successfully submitted to the orderer, the orderer distributes this transaction to all the peer organizations in the channel. Hence, the chaincode is instantiated on all the peer nodes on all the peer organizations in the channel.
+Use the following commands to create an Azure storage account. If you already have Azure storage account, skip this step.
 
-Refer command help for more details on the arguments passed in the command
-```
-npm run instantiateCC -- -h
-```
+    az account set --subscription $STORAGE_SUBSCRIPTION
+    az group create -l $STORAGE_LOCATION -n $STORAGE_RESOURCE_GROUP
+    az storage account create -n $STORAGE_ACCOUNT -g  $STORAGE_RESOURCE_GROUP -l $STORAGE_LOCATION --sku Standard_LRS
 
-<a name="invokeCC"></a>
-#### Invoke chaincode
-Execute below command to invoke the chaincode function:
-```
-npm run invokeCC -- -o $ORGNAME -u $USER_IDENTITY -n $CC_NAME -c $CHANNEL -f <invokeFunc> -a <invokeFuncArgs>
-```
-Pass invoke function name and comma seperated list of arguments in ```<invokeFunction>``` and  ```<invokeFuncArgs>``` respectively. Continuing with the ```fabcar``` chaincode example, to invoke ```initLedger``` function set ```<invokeFunction>``` to ```"initLedger"``` and ```<invokeFuncArgs>``` to ```""```.
+Use the following commands to create a file share in the Azure storage account. If you already have a file share, skip this step.
 
-> **_Note:_** Execute the command for once from any one peer organization in the channel. Once the transaction is successfully submitted to the orderer, the orderer distributes this transaction to all the peer organizations in the channel. Hence, the world state is updated on all peer nodes of all the peer organizations in the channel.
+    STORAGE_KEY=$(az storage account keys list --resource-group $STORAGE_RESOURCE_GROUP  --account-name $STORAGE_ACCOUNT --query "[0].value" | tr -d '"')
+    az storage share create  --account-name $STORAGE_ACCOUNT  --account-key $STORAGE_KEY  --name $STORAGE_FILE_SHARE
 
-Refer command help for more details on the arguments passed in the command
-```
-npm run invokeCC -- -h
-```
-<a name="queryCC"></a>
-#### Query chaincode
-Execute below command to query chaincode:
-```
-npm run queryCC -- -o $ORGNAME -u $USER_IDENTITY -n $CC_NAME -c $CHANNEL -f <queryFunction> -a <queryFuncArgs>
-```
-Pass query function name and comma seperated list of arguments in ```<queryFunction>``` and  ```<queryFuncArgs>``` respectively. Again taking ```fabcar``` chaincode as reference, to query all the cars in the world state set ```<queryFunction>``` to ```"queryAllCars"``` and ```<queryArgs>``` to ```""```.
+Use the following commands to generate a connection string for an Azure file share.
 
-Refer command help for more details on the arguments passed in the command
-```
-npm run queryCC -- -h
-```
+    STORAGE_KEY=$(az storage account keys list --resource-group $STORAGE_RESOURCE_GROUP  --account-name $STORAGE_ACCOUNT --query "[0].value" | tr -d '"')
+    SAS_TOKEN=$(az storage account generate-sas --account-key $STORAGE_KEY --account-name $STORAGE_ACCOUNT --expiry `date -u -d "1 day" '+%Y-%m-%dT%H:%MZ'` --https-only --permissions lruwd --resource-types sco --services f | tr -d '"')
+    AZURE_FILE_CONNECTION_STRING=https://$STORAGE_ACCOUNT.file.core.windows.net/$STORAGE_FILE_SHARE?$SAS_TOKEN
+
+####Import an organization connection profile, admin user identity, and MSP
+Use the following commands to fetch the organization's connection profile, admin user identity, and Managed Service Provider (MSP) from the Azure Kubernetes Service cluster and store these identities in the client application's local store. An example of a local store is the azhlfTool/stores directory.
+For the orderer organization:
+
+
+
+    ./azhlf adminProfile import fromAzure -o $ORDERER_ORG_NAME -g $ORDERER_ORG_RESOURCE_GROUP -s $ORDERER_ORG_SUBSCRIPTION
+    ./azhlf connectionProfile import fromAzure -g $ORDERER_ORG_RESOURCE_GROUP -s $ORDERER_ORG_SUBSCRIPTION -o $ORDERER_ORG_NAME   
+    ./azhlf msp import fromAzure -g $ORDERER_ORG_RESOURCE_GROUP -s $ORDERER_ORG_SUBSCRIPTION -o $ORDERER_ORG_NAME
+
+For the peer organization:
+
+    
+    ./azhlf adminProfile import fromAzure -g $PEER_ORG_RESOURCE_GROUP -s $PEER_ORG_SUBSCRIPTION -o $PEER_ORG_NAME
+    ./azhlf connectionProfile import fromAzure -g $PEER_ORG_RESOURCE_GROUP -s $PEER_ORG_SUBSCRIPTION -o $PEER_ORG_NAME
+    ./azhlf msp import fromAzure -g $PEER_ORG_RESOURCE_GROUP -s $PEER_ORG_SUBSCRIPTION -o $PEER_ORG_NAME
+
+####Add a peer organization for consortium management
+Run the following commands in the given order to add a peer organization in a channel and consortium:
+
+
+From the peer organization's client, upload the peer organization's MSP on Azure Storage.
+
+    ./azhlf msp export toAzureStorage -f  $AZURE_FILE_CONNECTION_STRING -o $PEER_ORG_NAME
+
+From the orderer organization's client, download the peer organization's MSP from Azure Storage. Then issue the command to add the peer organization in the channel and consortium.
+    
+    ./azhlf msp import fromAzureStorage -o $PEER_ORG_NAME -f $AZURE_FILE_CONNECTION_STRING
+    ./azhlf consortium join -o $ORDERER_ORG_NAME  -u $ORDERER_ADMIN_IDENTITY -p $PEER_ORG_NAME
+
+##Navigate
+Navigate to setupcli for channel and chaincode operations
+
+    cd ..
+    cd setupFabricCli
