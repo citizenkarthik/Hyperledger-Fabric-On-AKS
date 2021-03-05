@@ -62,6 +62,6 @@ az deployment group create --name <deployment> --resource-group <resourceGroup> 
 ##Navigate
 - Once Peer and Orderer are deployed open application folder
   ```
-  cd application
+  cd <rootDir>/Hyperledger-Fabric-On-AKS/application
   ```
 - Follow instructions from the Readme.MD in application folder

@@ -51,10 +51,11 @@ Execute below comand to generate connection profile and admin profile of the org
 ```bash
 ./getConnector.sh $AKS_RESOURCE_GROUP | sed -e "s/{action}/gateway/g"| xargs curl > ./profile/$ORGNAME-ccp.json
 ./getConnector.sh $AKS_RESOURCE_GROUP | sed -e "s/{action}/admin/g"| xargs curl > ./profile/$ORGNAME-admin.json
+./getConnector.sh $AKS_RESOURCE_GROUP | sed -e "s/{action}/msp/g"| xargs curl > ./profile/$ORGNAME-msp.json
 ```
-It will create connection profile and admin profile of the organization inside the ```profile``` folder with name ```<orgname>-ccp.json``` and ```<orgname>-admin.json``` respectively.
+It will create connection profile,admin profile and msp profile of the organization inside the ```profile``` folder with name ```<orgname>-ccp.json``` and ```<orgname>-admin.json``` respectively.
 
-Similarly, generate connection profile and admin profile for each orderer and peer organization.
+Similarly, generate connection profile, admin profile and msp profile for each orderer and peer organization.
 
 <a name="importAdmin"></a>
 ### Import admin user identity
@@ -180,4 +181,4 @@ From the orderer organization's client, download the peer organization's MSP fro
 Navigate to setupcli for channel and chaincode operations
 
     cd ..
-    cd setupFabricCli
+    cd <rootDir>/Hyperledger-Fabric-On-AKS/setupFabricCli

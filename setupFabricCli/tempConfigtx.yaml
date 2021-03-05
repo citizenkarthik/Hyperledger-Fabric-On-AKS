@@ -175,7 +175,7 @@ Channel: &ChannelDefaults
 #
 ################################################################################
 Profiles:
-    TwoOrgsChannel:
+    OrgsChannel:
         Consortium: SampleConsortium
         <<: *ChannelDefaults
         Application:
