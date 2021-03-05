@@ -85,48 +85,48 @@ createOrgMSP() {
     connectionProfilePath=$3
     mspProfilePath=$4
 
-    rm -rf ./crytoconfig/${nodeType}/${orgName}/*
-    mkdir -p ./crytoconfig/${nodeType}/${orgName}/msp/{admincerts,cacerts,keystore,signcerts,tlscacerts}
-    mkdir -p ./crytoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/{admincerts,cacerts,keystore,signcerts,tlscacerts}
-    mkdir -p ./crytoconfig/${nodeType}/${orgName}/tls
-    mkdir -p ./crytoconfig/${nodeType}/${orgName}/ca/tlsca
+    rm -rf ./cryptoconfig/${nodeType}/${orgName}/*
+    mkdir -p ./cryptoconfig/${nodeType}/${orgName}/msp/{admincerts,cacerts,keystore,signcerts,tlscacerts}
+    mkdir -p ./cryptoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/{admincerts,cacerts,keystore,signcerts,tlscacerts}
+    mkdir -p ./cryptoconfig/${nodeType}/${orgName}/tls
+    mkdir -p ./cryptoconfig/${nodeType}/${orgName}/ca/tlsca
     #admincerts
-    cat ${adminProfilePath} | jq '.cert' | tr -d '"' | base64 -d > ./crytoconfig/${nodeType}/${orgName}/msp/admincerts/cert.pem
-    cat ${adminProfilePath} | jq '.cert' | tr -d '"' | base64 -d > ./crytoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/admincerts/cert.pem
+    cat ${adminProfilePath} | jq '.cert' | tr -d '"' | base64 -d > ./cryptoconfig/${nodeType}/${orgName}/msp/admincerts/cert.pem
+    cat ${adminProfilePath} | jq '.cert' | tr -d '"' | base64 -d > ./cryptoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/admincerts/cert.pem
 
     #cacerts
-    cat ${mspProfilePath} | jq '.cacerts' | tr -d '"' | base64 -d > ./crytoconfig/${nodeType}/${orgName}/msp/cacerts/rca.pem
-    cat ${mspProfilePath} | jq '.cacerts' | tr -d '"' | base64 -d > ./crytoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/cacerts/rca.pem
+    cat ${mspProfilePath} | jq '.cacerts' | tr -d '"' | base64 -d > ./cryptoconfig/${nodeType}/${orgName}/msp/cacerts/rca.pem
+    cat ${mspProfilePath} | jq '.cacerts' | tr -d '"' | base64 -d > ./cryptoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/cacerts/rca.pem
 
 
-    cat $connectionProfilePath | jq '.certificateAuthorities.'${orgName}'CA.tlsCACerts.pem' | tr -d '"' | sed 's/\\n/\n/g' > ./crytoconfig/${nodeType}/${orgName}/ca/tlsca/cert.pem
+    cat $connectionProfilePath | jq '.certificateAuthorities.'${orgName}'CA.tlsCACerts.pem' | tr -d '"' | sed 's/\\n/\n/g' > ./cryptoconfig/${nodeType}/${orgName}/ca/tlsca/cert.pem
 
    for row in  $(cat $connectionProfilePath | jq '.organizations.'${orgName}'.'$nodeType's[]'); do
 
     folderName=$(sed -e 's/^"//' -e 's/"$//' <<<"$row")
     checkNodeName ${nodeType} ${connectionProfilePath} ${row}
-     mkdir -p ./crytoconfig/${nodeType}/${orgName}/${folderName}/msp/tlscacerts
+     mkdir -p ./cryptoconfig/${nodeType}/${orgName}/${folderName}/msp/tlscacerts
     #tlscacerts
     cat ${connectionProfilePath} | jq '.'$nodeType's.'$row'.tlsCACerts.pem' | tr -d '"' | sed 's/\\n/\n/g' > \
-    ./crytoconfig/${nodeType}/${orgName}/$folderName/msp/tlscacerts/ca.crt
+    ./cryptoconfig/${nodeType}/${orgName}/$folderName/msp/tlscacerts/ca.crt
 
    done
    echo "path nodeType/orgName "${nodeType}"/"${orgName}
     #signcerts
-    cp ./crytoconfig/${nodeType}/${orgName}/msp/admincerts/cert.pem ./crytoconfig/${nodeType}/${orgName}/msp/signcerts/cert.pem
-    cp ./crytoconfig/${nodeType}/${orgName}/msp/admincerts/cert.pem ./crytoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/signcerts/admin.${orgName}@${orgName}-cert.pem
+    cp ./cryptoconfig/${nodeType}/${orgName}/msp/admincerts/cert.pem ./cryptoconfig/${nodeType}/${orgName}/msp/signcerts/cert.pem
+    cp ./cryptoconfig/${nodeType}/${orgName}/msp/admincerts/cert.pem ./cryptoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/signcerts/admin.${orgName}@${orgName}-cert.pem
 
 
     #keystore
-    cat ${adminProfilePath} | jq '.private_key' | tr -d '"' | base64 -d > ./crytoconfig/${nodeType}/${orgName}/msp/keystore/key.pem
-    cat ${adminProfilePath} | jq '.private_key' | tr -d '"' | base64 -d > ./crytoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/keystore/priv_sk
+    cat ${adminProfilePath} | jq '.private_key' | tr -d '"' | base64 -d > ./cryptoconfig/${nodeType}/${orgName}/msp/keystore/key.pem
+    cat ${adminProfilePath} | jq '.private_key' | tr -d '"' | base64 -d > ./cryptoconfig/${nodeType}/${orgName}/users/admin.${orgName}/msp/keystore/priv_sk
 
 
     #admin-tls-cert
-    cat ${adminProfilePath} | jq '.tls_cert' | tr -d '"' | base64 -d > ./crytoconfig/${nodeType}/${orgName}/tls/cert.pem
+    cat ${adminProfilePath} | jq '.tls_cert' | tr -d '"' | base64 -d > ./cryptoconfig/${nodeType}/${orgName}/tls/cert.pem
 
     #admin-tls-key
-    cat ${adminProfilePath} | jq '.tls_private_key' | tr -d '"' | base64 -d > ./crytoconfig/${nodeType}/${orgName}/tls/key.pem
+    cat ${adminProfilePath} | jq '.tls_private_key' | tr -d '"' | base64 -d > ./cryptoconfig/${nodeType}/${orgName}/tls/key.pem
 }
 
 createOrdererTLSCA() {
