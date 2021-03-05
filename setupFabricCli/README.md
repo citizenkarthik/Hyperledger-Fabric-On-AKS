@@ -4,57 +4,75 @@ Open link below to set up fabric cli by following instructions provided on its r
 
     https://github.com/hyperledger/fabric-cli
 
-set up fabric cli environment variable
+Generate cryptomaterials from connection profile, admin profile, msp profile for peer and orderer organizations
 
+For Peer organization
+    
+    cd <rootDir>/Hyperledger-Fabric-On-AKS/setupFabricCli
+    PEER_CONNECTION_PROFILE_PATH=<path-to-peerConnectionProfile.json>
+    PEER_ADMIN_PROFILE_PATH=<path-to-peerAdminProfile.json>
+    PEER_MSP_PROFILE=<path-to-peerMSPProfile.json>
+    ./certgen.sh peer $PEER_ADMIN_PROFILE_PATH $PEER_CONNECTION_PROFILE_PATH $PEER_MSP_PROFILE
+    
+For Orderer organization
 
-    export FABRIC_CLI_PATH =<path_to_fabric_binary>
+    ORDERER_CONNECTION_PROFILE_PATH=<path-to-ordererConnectionProfile.json>
+    ORDERER_ADMIN_PROFILE_PATH=<path-to-ordererAdminProfile.json>
+    ORDERER_MSP_PROFILE=<path-to-ordererMSPProfile.json>
+    ./certgen.sh orderer $ORDERER_ADMIN_PROFILE_PATH $ORDERER_CONNECTION_PROFILE_PATH $ORDERER_MSP_PROFILE
 
+Set up fabric cli environment
 
+    export FABRIC_EXECUTABLE_PATH =<path_to_fabric_binary>
     export PEER_CONNECTION_PROFILE_PATH=<path_to_peer_connection_profile.json>
     export ORDERER_CONNECTION_PROFILE_PATH=<path_to_orderer_connection_profile.json>
 
     cd genFabricCliGO/main/
-    go build -o ../../yamlconversion
+    go build -o ../../configCoversion
+    cd ../../
+    ./configCoversion (this command will create fabric go sdk based config file with name peerorg.yaml)
 
+Initialize fabric cli
 
-    mv yamlconversion ../../
-    ./yamlconversion
+    $FABRIC_EXECUTABLE_PATH network set <network-name> <path-to-go-sdk-config.yaml>
+    $FABRIC_EXECUTABLE_PATH context set <context-name> --channel <channel-name> --network <network-name> --organization <peer-orgname> --user <admin-user>
+    $FABRIC_EXECUTABLE_PATH context use <context-name>
 
 ### Channel operations
 
 Use the following command to pull binaries of HLF 2.2
-
+    
+    cd genFabricCliGO
     curl -sSL https://goo.gl/6wtTN5 | bash -s 2.2.0
-
-    bin/configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/channelone.tx -channelID channelone
-
+    cat tempConfigtx.yaml | sed -e "s/OrgName/<peerOrgName>/g" > configtx.yaml
+    bin/configtxgen -profile OrgsChannel -outputCreateChannelTx ./channel-artifacts/<channel-name>.tx -channelID <channel-name>
+    $FABRIC_EXECUTABLE_PATH channel create <channel-name> ./channel-artifacts/<channel-name>.tx
+    $FABRIC_EXECUTABLE_PATH channel join <channel-name>
 
 ### Chaincode operations
 
-Content to be added
+##### Package chaincode
 
-#### Package chaincode
-
-Content to be added
+    $FABRIC_EXECUTABLE_PATH lifecycle package <chaincode-label> <chaincode-type> <path>
 
 #### Install chaincode
 
-Content to be added
-
+    $FABRIC_EXECUTABLE_PATH lifecycle install <chaincode-label> <path>
+    
 #### Approve chaincode
 
-Content to be added
+    $FABRIC_EXECUTABLE_PATH lifecycle approve <chaincode-name> <version> <package-id> <sequence> --policy <policy string>
 
 #### Commit chaincode
 
-Content to be added
+    $FABRIC_EXECUTABLE_PATH lifecycle commit <chaincode-name> <version> <sequence> --policy <policy>
 
 
 #### Invoke chaincode
 
-Content to be added
+    $FABRIC_EXECUTABLE_PATH  chaincode invoke -h
 
 #### Query chaincode
 
-Content to be added
+    $FABRIC_EXECUTABLE_PATH chaincode query -h
 
