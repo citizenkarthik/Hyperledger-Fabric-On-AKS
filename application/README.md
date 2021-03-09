@@ -148,7 +148,7 @@ Use the following commands to generate a connection string for an Azure file sha
     SAS_TOKEN=$(az storage account generate-sas --account-key $STORAGE_KEY --account-name $STORAGE_ACCOUNT --expiry `date -u -d "1 day" '+%Y-%m-%dT%H:%MZ'` --https-only --permissions lruwd --resource-types sco --services f | tr -d '"')
     AZURE_FILE_CONNECTION_STRING=https://$STORAGE_ACCOUNT.file.core.windows.net/$STORAGE_FILE_SHARE?$SAS_TOKEN
 
-####Import an organization connection profile, admin user identity, and MSP
+###Import an organization connection profile, admin user identity, and MSP
 
 Use the following commands to fetch the organization's connection profile, admin user identity, and Managed Service Provider (MSP) from the Azure Kubernetes Service cluster and store these identities in the client application's local store. An example of a local store is the azhlfTool/stores directory.
 For the orderer organization:
@@ -166,7 +166,7 @@ For the peer organization:
     ./azhlf connectionProfile import fromAzure -g $PEER_ORG_RESOURCE_GROUP -s $PEER_ORG_SUBSCRIPTION -o $PEER_ORG_NAME
     ./azhlf msp import fromAzure -g $PEER_ORG_RESOURCE_GROUP -s $PEER_ORG_SUBSCRIPTION -o $PEER_ORG_NAME
 
-####Add a peer organization for consortium management
+###Add a peer organization for consortium management
 
 Run the following commands in the given order to add a peer organization in a channel and consortium:
 
