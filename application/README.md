@@ -106,8 +106,8 @@ npm run registerUser -- -h
     cd Hyperledger-Fabric-On-AKS/azhlfTool 
     npm install
     npm run setup
-####Set up environment variables
-####Set environment variables for the orderer organization's client
+Set up environment variables
+Set environment variables for the orderer organization's client
     
     ORDERER_ORG_SUBSCRIPTION=<ordererOrgSubscription>
     ORDERER_ORG_RESOURCE_GROUP=<ordererOrgResourceGroup>
@@ -115,7 +115,7 @@ npm run registerUser -- -h
     ORDERER_ADMIN_IDENTITY="admin.$ORDERER_ORG_NAME"
     CHANNEL_NAME=<channelName>
 
-#####Set environment variables for the peer organization's client
+Set environment variables for the peer organization's client
 
     PEER_ORG_SUBSCRIPTION=<peerOrgSubscritpion>
     PEER_ORG_RESOURCE_GROUP=<peerOrgResourceGroup>
@@ -123,7 +123,7 @@ npm run registerUser -- -h
     PEER_ADMIN_IDENTITY="admin.$PEER_ORG_NAME"
     CHANNEL_NAME=<channelName>
 
-#####Set environment variables for an Azure storage account
+Set environment variables for an Azure storage account
 
     STORAGE_SUBSCRIPTION=<subscriptionId>
     STORAGE_RESOURCE_GROUP=<azureFileShareResourceGroup>
