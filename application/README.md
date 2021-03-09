@@ -107,7 +107,8 @@ npm run registerUser -- -h
     npm install
     npm run setup
 ####Set up environment variables
-######Set environment variables for the orderer organization's client
+####Set environment variables for the orderer organization's client
+    
     ORDERER_ORG_SUBSCRIPTION=<ordererOrgSubscription>
     ORDERER_ORG_RESOURCE_GROUP=<ordererOrgResourceGroup>
     ORDERER_ORG_NAME=<ordererOrgName>
