@@ -76,3 +76,42 @@ Use the following command to pull binaries of HLF 2.2
 
     $FABRIC_EXECUTABLE_PATH chaincode query -h
 
+#### Create Channel With Custom Policy
+
+New channel with custom policy can be created by editing the policy in the "tempConfigtx.yaml" and then executing the commands in the "Channel Operation" section 
+to create a new channel with those custom policies.
+
+For example, let's assume for Application Admin policy we want to change the permissions where in place of Majority only "orgName" organization's admin signatures 
+are required to approve the changes. In that case our application section in the yaml file will look like as below.
+
+     Application: &ApplicationDefaults
+     
+         # Organizations is the list of orgs which are defined as participants on
+         # the application side of the network
+         Organizations:
+     
+         # Policies defines the set of policies at this level of the config tree
+         # For Application policies, their canonical path is
+         #   /Channel/Application/<PolicyName>
+         Policies:
+             Readers:
+                 Type: ImplicitMeta
+                 Rule: "ANY Readers"
+             Writers:
+                 Type: ImplicitMeta
+                 Rule: "ANY Writers"
+             Admins:
+                 Type: Signature
+                 Rule: "OR('OrgName.admin')"
+             # LifecycleEndorsement:
+             #     Type: ImplicitMeta
+             #     Rule: "MAJORITY Endorsement"
+             # Endorsement:
+             #     Type: ImplicitMeta
+             #     Rule: "MAJORITY Endorsement"
+     
+         Capabilities:
+             <<: *ApplicationCapabilities
+     
+After making this change you generate the genesis and channel files using commands as in the "Channel Operation" section and you will get a channel with custom 
+policy of you own.
