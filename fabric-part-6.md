@@ -2,9 +2,6 @@
 
 - Once the setup is us and running, you bash into the cli container and execute the commands for chaincode related operations.
 
-
-![chaincode.png](images/chaincode.png)
-
 - Below are the chaincode related operations to be performed:
 
 
@@ -20,6 +17,8 @@
 ```
 
 - The chaincode we are going to use is developed using GO, so all the above processes will be executed from Go chaincode perspective.
+
+![chaincode.png](images/chaincode-map.png)
 
 
 ##   Package Chaincode
