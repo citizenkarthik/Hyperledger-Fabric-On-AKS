@@ -1,67 +1,17 @@
-# Prerequisites
-- NodeJS 10.14.1
-- zip
-
-# Generating the docker image and the marketplace artifacts
-## Clone the git repo
-```
-git clone https://github.com/citizenkarthik/Hyperledger-Fabric-On-AKS.git
-
-```
-
-## Navigate to the scripts directory
-```
-cd Hyperledger-Fabric-On-AKS/scripts
-
-```
-
-## Execute the generateArtifacts.sh script
-```
-bash generateArtifacts.sh <DockerImageNameWithTag>
-```
-
-An example to this command would be `bash generateArtifacts.sh yourrepo/fabrictools:3.1`
-
-## Push the image to the registry
-The image that is built in the previous step needs to be uploaded in a docker registry to be used by the ARM template.
-
-The image can be pushed to a docker registry of your choice by using the following command:
-
-```
-docker push <DockerImageWithTag>
-```
-
-Please note that you may need to do docker login to your registry to successfully push the image.
-
-## Upload the generated artifacts
-The artifacts are generated at `Hyperledger-Fabric-On-AKS/out`. The contents in the `out` directory should be uploaded to a location that can be accessed by the template. While uploading, the directory structure should not be changed.
-
-For example, if we are uploading the artifacts to the Azure Blob using Azure CLI, the following commands can be used.
-
-```
-az storage blob upload --account-name <storageAccountName> --container-name mktplace --file <rootDir>/Hyperledger-Fabric-On-AKS/out/hlf-marketplace.zip --name hlf-marketplace.zip --account-key $ACCOUNT_KEY
-
-az storage blob upload --account-name <storageAccountName> --container-name mktplace --file <rootDir>/Hyperledger-Fabric-On-AKS/out/artifacts/funcNodeJS.zip --name artifacts/funcNodeJS.zip --account-key $ACCOUNT_KEY
-
-az storage blob upload --account-name <storageAccountName> --container-name mktplace --file <rootDir>/Hyperledger-Fabric-On-AKS/out/nestedtemplates/publicIpTemplate.json --name nestedtemplates/publicIpTemplate.json --account-key $ACCOUNT_KEY
-
-az storage blob upload --account-name <storageAccountName> --container-name mktplace --file <rootDir>/Hyperledger-Fabric-On-AKS/out/mainTemplate.json --name mainTemplate.json --account-key $ACCOUNT_KEY
-```
-
-# Deploying the template
-The template can be deployed using Azure CLI or Powershell.
-
-Sample command to deploy from Azure CLI is as follows:
-```
-az deployment group create --name <deployment> --resource-group <resourceGroup> --subscription <subscriptionId> --template-uri https://<baseURI>/mainTemplate.json
-```
+## Hyperledger Fabric on AKS using ARM Deployment🥁
 
 
-#After Deployment 
+- Microsoft offers an Azure managed application on the Azure Marketplace. The purpose of this application is for enterprise azure customers to deploy Hyperledger Fabric network (Peer and Orderer Clusters) and post deployment gets connected/ facilitated with IaaS model using Microsoft ARM template. We have updated the code for the source code of Azure HL 1.4 Blockchain Service code from Github.
 
-##Navigate
-- Once Peer and Orderer are deployed open application folder
-  ```
-  cd <rootDir>/Hyperledger-Fabric-On-AKS/application
-  ```
-- Follow instructions from the Readme.MD in application folder
+This will be explained in different Readme files which cover parts of the whole process.
+
+
+## Follow 🛠
+- [ARM Template Deployment ](fabric-part-1.md)
+- [Generating Profiles ](fabric-part-2.md)
+- [Optional Fabric CA Operations ](fabric-ca.md)
+- [Consortium Creation ](fabric-part-3.md)
+- [Setup Fabric Cli Go ](fabric-part-4.md)
+- [Channel Operations ](fabric-part-5.md)
+- [Chaincode Operations ](fabric-part-6.md)
+- [External Chaincode ](fabric-part-7.md)
