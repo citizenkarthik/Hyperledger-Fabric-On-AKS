@@ -19,19 +19,33 @@
 - For example, the following samples use jq and bash, which
   are not included in the current official fabric-peer image.
 
+## Enabling TLS communication between chaincode and peer
+
+-  Set tls_required parameter to true in connection.json file
+-  Generate tls certs for chaincode 
+```
+$ openssl req -nodes -x509 -newkey rsa:4096 -keyout crypto/key1.pem -out crypto/cert1.pem -subj "/C=IN/ST=KA/L=Bangalore/O=example Inc/OU=Developer/CN=asset-transfer-basic.hlf1/emailAddress=dev@asset-transfer-basic.hlf1"
+``` 
+- Use cert1.pem as string for root_cert parameter in connection.json 
+```
+$ awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' crypto/cert1.pem
+
+```
+- Mount tls certs as k8s secrets in chaincode container, find reference below
 
 ## Packaging Chaincode
 
 
-- With the Fabric v2.0 chaincode lifecycle, chaincode is packaged and installed in a .tar.gz
+- With the Fabric v2.0 chaincode lifecycle, chaincode is packaged and installed in a .tar.tgz 
   format.
-- The following myccpackage.tgz archive demonstrates the required structure:
+- The following asset-transfer-basic-external.tgz archive demonstrates the required structure:
 
 ```
-$ tar xvfz myccpackage.tgz
-metadata.json
-code.tar.gz
+$ cd <rootDir>/Hyperledger-Fabric-On-AKS/chaincode-samples/asset-transfer-basic/chaincode-external/
+$ tar cfz code.tar.gz connection.json
+$ tar cfz asset-transfer-basic-external.tgz metadata.json 
 ```
+>   Note: Fabric cli should be initialized
 
 ## File code.tar.gz
 
@@ -40,54 +54,53 @@ code.tar.gz
 - Connection.json will have things like address of the chaincode, port etc.
 - Metadata will have type and label of chaincode, type has to be external in order to use CaaS.
 
-
-
 - Connection.json is filled with information first ,we package this and create tar.
 
 
-## Chaincode Image
+## Installing the external chaincode
 
 - Create docker image of chaincode.
 - Deploy chaincode on cluster.
 - Package the chaincode and install to get peer identifier.
-
-
 - Run chaincode using identifier.
 - Certs and key are needed, mount them to container.
 - Once its deployed and running, we approve chaincode.
 
+```
+$ $FABRIC_EXECUTABLE_PATH lifecycle install basic <path-to-package>/asset-transfer-basic-external.tgz
 
->   Note: You can now invoke and query the chaincode.
+```
 
+ ## Kubernetes operations for deploying chaincode
+```
+$ kubectl create ns hlf1
+$ kubectl create secret generic cc-cert --from-file=cert1.pem -n hlf1
+$ kubectl create secret generic cc-key --from-file=key1.pem -n hlf1
+$ kubectl apply -f asset-transfer-basic.yaml (Add chaincode Identifier in manisfest file)
 
-## TLS
+```
+> Note: Go through environment variables in asset-transfer-basic.yaml, tls certs for chaincode is created using openssl in crypto folder
 
->   Note: This is done without Client_Auth On
+## Chaincode Approval and Commit
 
+```
+$ $FABRIC_EXECUTABLE_PATH lifecycle approve basic v1 basics_1.0:307a3baf76dce88bf3a943fd540e659c76c34b2e3998cd03148ca3714fc60246  1 --policy "OR('kcpeer.member')"
 
-- Convert the certificate to string using `awk` or any other method.
-
-Add this data to connection.json as root.pem value.
-
+$ $FABRIC_EXECUTABLE_PATH lifecycle commit basic v1 1 --policy "OR('kcpeer.member')"
 
 
 ```
-{
-  "address": "your.chaincode.host.com:9999",
-  "dial_timeout": "10s",
-  "tls_required": "true",
-  "client_auth_required": "false",
-  "client_key": "-----BEGIN EC PRIVATE KEY----- ... -----END EC PRIVATE KEY-----",
-  "client_cert": "-----BEGIN CERTIFICATE----- ... -----END CERTIFICATE-----",
-  "root_cert": "-----BEGIN CERTIFICATE---- ... -----END CERTIFICATE-----"
-}
+## Chaincode Invoke and Query
+
+```
+$ $FABRIC_EXECUTABLE_PATH  chaincode invoke basic --fcn InitLedger --args []
+
+$ $FABRIC_EXECUTABLE_PATH  chaincode query basic --fcn GetAllAssets  --args []
+
 ```
 
+>   Note: Chaincode is deployed in peer's cluster in this example.
 
-- Create a seperate namespace.
-- After installation we take chaincode id and create secrets.
 
-- Create secret with certificate and now run chaincode.
-- Connect peer to chaincode using commands.
-- Package, install, approve and commit.
+
 
