@@ -8,7 +8,7 @@
 - Using the fabric binaries OrgName is collected to replace peerOrgName in configtx. Once this step completes configtxgen is used to to create channel context.
 - Peers join the network using join channel.
 ```
-cd genFabricCliGO
+cd setupFabricCliGoConfig
   
 curl https://raw.githubusercontent.com/hyperledger/fabric/master/scripts/bootstrap.sh | bash -s -- 2.2.0 -d -s
 

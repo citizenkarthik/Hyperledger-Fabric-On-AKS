@@ -54,7 +54,7 @@
 
 
 ```
-cd <rootDir>/Hyperledger-Fabric-On-AKS/setupFabricCli
+cd <rootDir>/Hyperledger-Fabric-On-AKS/setupFabricCliGoConfig
 PEER_CONNECTION_PROFILE_PATH=<path-to-peerConnectionProfile.json>
 PEER_ADMIN_PROFILE_PATH=<path-to-peerAdminProfile.json>
 PEER_MSP_PROFILE=<path-to-peerMSPProfile.json>
