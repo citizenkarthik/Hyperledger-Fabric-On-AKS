@@ -44,7 +44,7 @@ spec:
            name: fabric-storage
            subPath: peer{nodeNum}-couchdb
       - name: peer{nodeNum}
-        image: hyperledger/fabric-peer:2.2.0
+        image: krypctechnologies/azurehlfrepo:peer-extern-2.2.0
         env:
         - name: CORE_LEDGER_STATE_STATEDATABASE
           value: "CouchDB"

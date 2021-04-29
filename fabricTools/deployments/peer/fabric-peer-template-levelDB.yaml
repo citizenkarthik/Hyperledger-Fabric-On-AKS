@@ -36,7 +36,7 @@ spec:
       - name: fabric-tools-secrets
       containers: 
       - name: peer{nodeNum} 
-        image: hyperledger/fabric-peer:2.2.0
+        image: krypctechnologies/azurehlfrepo:peer-extern-2.2.0
         env:
         - name: CORE_VM_ENDPOINT
           value: "unix:///host/var/run/docker.sock"
