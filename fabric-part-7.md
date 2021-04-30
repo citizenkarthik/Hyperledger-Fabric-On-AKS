@@ -33,6 +33,7 @@ $ awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' crypto/cert1.pem
 ```
 - Mount tls certs as k8s secrets in chaincode container, find reference below
 
+> Note: the steps provided below and their explainations refered to tha sample provided in this repository at `Hyperledger-Fabric-On-AKS/chaincode-samples/asset-transfer-basic/chaincode-external`
 ## Packaging Chaincode
 
 
@@ -58,14 +59,14 @@ $ tar cfz asset-transfer-basic-external.tgz metadata.json
 
 
 ## Installing the external chaincode
-
+### Overview of the process followed :
 - Create docker image of chaincode.
 - Deploy chaincode on cluster.
 - Package the chaincode and install to get peer identifier.
 - Run chaincode using identifier.
 - Certs and key are needed, mount them to container.
 - Once its deployed and running, we approve chaincode.
-
+- The containerized external chaincode image will be executing independently as per our process overview. This provides additional security while executing chaincode in HLF.
 ```
 $ $FABRIC_EXECUTABLE_PATH lifecycle install basic <path-to-package>/asset-transfer-basic-external.tgz
 
