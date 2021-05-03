@@ -80,7 +80,7 @@ $ kubectl create secret generic cc-key --from-file=key1.pem -n hlf1
 $ kubectl apply -f asset-transfer-basic.yaml (Add chaincode Identifier in manisfest file)
 
 ```
-> Note: Go through environment variables in asset-transfer-basic.yaml, tls certs for chaincode is created using openssl in crypto folder
+> Note: Go through environment variables in asset-transfer-basic.yaml, tls certs and k8s secrets for chaincode is created using openssl in crypto folder
 
 ## Chaincode Approval and Commit
 

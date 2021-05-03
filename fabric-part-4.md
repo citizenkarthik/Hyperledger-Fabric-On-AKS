@@ -83,7 +83,7 @@ export FABRIC_EXECUTABLE_PATH =<path_to_fabric_binary>
 export PEER_CONNECTION_PROFILE_PATH=<path_to_peer_connection_profile.json>
 export ORDERER_CONNECTION_PROFILE_PATH=<path_to_orderer_connection_profile.json>
 
-cd genFabricCliGO/main/
+cd genFabricCliGOConfig/main/
 go build -o ../../configCoversion
 cd ../../
 ./configCoversion (this command will create fabric go sdk based config file with name peerorg.yaml)
